@@ -3,7 +3,7 @@
     <header>
       <h1>Dobrodošli na početnu stranicu</h1>
       <div>
-        <p>Prijavljeni korisnik: {{ currentUser }}</p>
+        <p>Prijavljeni korisnik: {{ usersData }}</p>
         <button @click="logout">Odjava</button>
       </div>
     </header>
@@ -26,69 +26,75 @@
 </template>
 
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
 
-  header {
-    background-color: #007bff;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
-  }
+header {
+  background-color: #007bff;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
 
-  nav {
-    background-color: #f2f2f2;
-    padding: 10px;
-  }
+nav {
+  background-color: #f2f2f2;
+  padding: 10px;
+}
 
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
 
-  li {
-    display: inline-block;
-    margin-right: 10px;
-  }
+li {
+  display: inline-block;
+  margin-right: 10px;
+}
 
-  li a {
-    display: block;
-    padding: 10px;
-    color: #000;
-    text-decoration: none;
-  }
+li a {
+  display: block;
+  padding: 10px;
+  color: #000;
+  text-decoration: none;
+}
 
-  li a:hover {
-    background-color: #ddd;
-  }
+li a:hover {
+  background-color: #ddd;
+}
 
-  section {
-    padding: 20px;
-    text-align: center;
-  }
+section {
+  padding: 20px;
+  text-align: center;
+}
 </style>
 
 <script>
+import { Auth } from "../services/index.js";
 export default {
-  computed: {
-    currentUser() {
-      return this.$store.getters.currentUser;
-    },
+  data() {
+    return {
+      usersData: "",
+    };
   },
   methods: {
     logout() {
-      this.$store.dispatch('logout').then(() => {
-        this.$router.push('/');
+      this.$store.dispatch("logout").then(() => {
+        this.$router.push("/");
       });
     },
+    async getName() {
+      this.usersData = await Auth.getUser();
+      console.log(this.usersData);
+    },
   },
-  mounted() {
+  async mounted() {
     // Dodajte ovo kako biste ažurirali trenutnog korisnika prilikom ponovnog učitavanja stranice
-    this.$store.dispatch('setUser', this.$store.getters.currentUser);
+    this.$store.dispatch("setUser", this.$store.getters.currentUser);
+    this.usersData = await Auth.getName();
   },
 };
 </script>
